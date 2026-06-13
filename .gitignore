@@ -19,6 +19,7 @@
 # NestJS / Backend build
 # ===================================
 **/dist/
+backend/dist/
 
 # ===================================
 # Environment variables — NEVER commit secrets
