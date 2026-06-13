@@ -46,6 +46,13 @@ export default function PatientsPage() {
 
   useEffect(() => {
     fetchPatients();
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const filter = params.get("filter");
+      if (filter === "Pending" || filter === "Uploaded" || filter === "All") {
+        setStatusFilter(filter);
+      }
+    }
   }, []);
 
   const filteredPatients = useMemo(() => {

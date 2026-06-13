@@ -72,6 +72,23 @@ export default function NursePatientProfilePage() {
   const pointsRef = useRef<number[]>(new Array(100).fill(96));
   const tickRef = useRef(0);
   const liveVitalsRef = useRef({ hr: 82, spo2: 98, temp: 36.8, resp: 18 });
+  const connectedDeviceRef = useRef<string | null>(null);
+
+  // Clean up database vitals on unmount if device was connected
+  useEffect(() => {
+    return () => {
+      if (connectedDeviceRef.current && params?.id) {
+        fetch(`/api/doctor/patients/${params.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            hr: null,
+            spo2: null
+          })
+        }).catch(() => undefined);
+      }
+    };
+  }, [params?.id]);
 
   // Date states
   const todayStr = getTodayString();
@@ -113,6 +130,7 @@ export default function NursePatientProfilePage() {
 
   const connectDevice = (device: string) => {
     setConnectedDevice(device);
+    connectedDeviceRef.current = device;
     setShowDeviceList(false);
     // Initialize live vital display
     setLiveVitals({ ...liveVitalsRef.current });
@@ -120,8 +138,19 @@ export default function NursePatientProfilePage() {
 
   const disconnectDevice = () => {
     setConnectedDevice(null);
+    connectedDeviceRef.current = null;
     setLiveVitals(undefined);
     setLivePoints([]);
+    if (params?.id) {
+      fetch(`/api/doctor/patients/${params.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hr: null,
+          spo2: null
+        })
+      }).catch(() => undefined);
+    }
   };
 
   // Web Bluetooth GATT Connection for Shanghai Berry PM6100 Monitor
@@ -146,6 +175,7 @@ export default function NursePatientProfilePage() {
       });
 
       setConnectedDevice(device.name || "Physical Berry PM6100");
+      connectedDeviceRef.current = device.name || "Physical Berry PM6100";
       setScanning(false);
 
       const server = await device.gatt?.connect();
@@ -215,6 +245,7 @@ export default function NursePatientProfilePage() {
       console.error("Web Bluetooth error:", err);
       setScanning(false);
       setConnectedDevice(null);
+      connectedDeviceRef.current = null;
       alert(`Web Bluetooth Connection failed: ${err.message || err}`);
     }
   };
@@ -223,9 +254,20 @@ export default function NursePatientProfilePage() {
     setSelectedDate(date);
     // If date is changed, disconnect active monitor
     setConnectedDevice(null);
+    connectedDeviceRef.current = null;
     setLiveVitals(undefined);
     setLivePoints([]);
     setShowDeviceList(false);
+    if (params?.id) {
+      fetch(`/api/doctor/patients/${params.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hr: null,
+          spo2: null
+        })
+      }).catch(() => undefined);
+    }
   };
 
   // Telemetry loops

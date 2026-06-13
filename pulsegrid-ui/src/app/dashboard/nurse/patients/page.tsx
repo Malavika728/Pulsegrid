@@ -44,6 +44,13 @@ export default function NursePatientsPage() {
 
   useEffect(() => {
     fetchPatients();
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const filter = params.get("filter");
+      if (filter === "Pending" || filter === "Uploaded" || filter === "All") {
+        setStatusFilter(filter);
+      }
+    }
   }, []);
 
   const filteredPatients = useMemo(() => {
@@ -109,6 +116,23 @@ export default function NursePatientsPage() {
             placeholder="Search patient by name, ID, or ward..."
             className="w-full border border-slate-200 rounded-2xl pl-12 pr-4 py-3 outline-none transition focus:border-teal-500 focus:bg-slate-50/50 text-slate-800 text-sm font-medium"
           />
+        </div>
+
+        <div className="flex gap-2.5 mt-5 flex-wrap">
+          {["All", "Pending", "Uploaded"].map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setStatusFilter(item)}
+              className={`rounded-xl px-5 py-2 text-xs font-semibold tracking-wide uppercase transition ${
+                statusFilter === item
+                  ? "bg-teal-600 text-white shadow-md shadow-teal-600/10"
+                  : "border border-slate-200 bg-white text-slate-600 hover:border-teal-500 hover:text-teal-600"
+              }`}
+            >
+              {item}
+            </button>
+          ))}
         </div>
       </div>
 

@@ -85,6 +85,7 @@ export default function Sidebar() {
         ];
       case "Nurse":
         return [
+          { title: "Dashboard", href: "/dashboard/nurse", icon: LayoutDashboard },
           { title: "Patients Registry", href: "/dashboard/nurse/patients", icon: Users },
           { title: "Settings", href: "/dashboard/doctor/settings", icon: Settings }, // Reuse doctor settings page
         ];
