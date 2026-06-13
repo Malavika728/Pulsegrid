@@ -36,6 +36,25 @@ export default function Sidebar() {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
+        const names: Record<string, string> = {
+          Doctor: "Dr. Sarah Johnson",
+          Nurse: "Nancy Wheeler",
+          Patient: "Arjun Sharma",
+          "Lab Tech": "Ravi Thomas",
+          "Hospital Admin": "Jordan Lee",
+        };
+        const hasInvalidName =
+          !parsed.name ||
+          parsed.name === "DR" ||
+          parsed.name === "Dr" ||
+          parsed.name === "Dr." ||
+          parsed.name === "User" ||
+          parsed.name === parsed.role;
+
+        if (hasInvalidName) {
+          parsed.name = names[parsed.role] || "User";
+          localStorage.setItem("pulsegrid_user", JSON.stringify(parsed));
+        }
         setUser(parsed);
       } catch {}
     } else {

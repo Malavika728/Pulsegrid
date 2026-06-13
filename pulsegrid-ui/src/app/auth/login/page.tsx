@@ -229,7 +229,24 @@ export default function LoginPage() {
 
                   if (email.trim().toLowerCase() === expected.email && password === expected.password) {
                     setError("");
-                    localStorage.setItem("pulsegrid_user", JSON.stringify({ role: selectedRole, email: email.trim().toLowerCase(), hospitalCode: normalizedCode, hospitalName }));
+                    const names: Record<string, string> = {
+                      Doctor: "Dr. Sarah Johnson",
+                      Nurse: "Nancy Wheeler",
+                      Patient: "Arjun Sharma",
+                      "Lab Tech": "Ravi Thomas",
+                      "Hospital Admin": "Jordan Lee",
+                    };
+                    const displayName = names[selectedRole] || "User";
+                    localStorage.setItem(
+                      "pulsegrid_user",
+                      JSON.stringify({
+                        role: selectedRole,
+                        name: displayName,
+                        email: email.trim().toLowerCase(),
+                        hospitalCode: normalizedCode,
+                        hospitalName,
+                      })
+                    );
                     router.push(roleRoutes[selectedRole] ?? "/dashboard/doctor");
                     return;
                   }

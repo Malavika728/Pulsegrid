@@ -14,10 +14,8 @@ export default function PatientLiveMonitoringPage() {
         </p>
       </section>
 
-      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-        <ECGMonitor />
-        <LiveVitals />
-      </div>
+      <ECGMonitor />
+      <LiveVitals />
     </div>
   );
 }

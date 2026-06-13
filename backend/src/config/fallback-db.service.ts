@@ -252,6 +252,8 @@ export class FallbackDbService implements OnModuleInit {
         id: `P-${1000 + this.data.patients.length + 1}`,
         name: user.name,
         age: user.age || 45,
+        ward: user.ward || 'General',
+        doctor: user.doctor || 'Dr. Sarah Johnson',
         hospitalCode: user.hospitalCode,
       });
     }

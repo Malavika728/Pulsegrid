@@ -17,20 +17,7 @@
   ],
   "patients": [
     {
-      "id": "P-1043",
-      "name": "Arjun Sharma",
-      "ward": "ICU-A",
-      "age": 64,
-      "hr": 74,
-      "spo2": 98,
-      "status": "Stable",
-      "recovery": 92,
-      "condition": "Post-op cardiac monitoring",
-      "doctor": "Dr. Sarah Johnson",
-      "room": "A-12",
-      "risk": "Low",
       "hospitalCode": "CITYHOSP01",
-      "labTest": "CBC, Lipid Panel",
       "labTests": [
         {
           "id": "LT-1043-1",
@@ -46,23 +33,23 @@
           "pdfFilename": null,
           "pdfData": null
         }
-      ]
+      ],
+      "id": "P-1043",
+      "name": "Arjun Sharma",
+      "ward": "ICU-A",
+      "age": 64,
+      "hr": 74,
+      "spo2": 98,
+      "status": "Stable",
+      "recovery": 92,
+      "condition": "Post-op cardiac monitoring",
+      "doctor": "Dr. Sarah Johnson",
+      "room": "A-12",
+      "risk": "Low",
+      "labTest": "CBC, Lipid Panel"
     },
     {
-      "id": "P-1044",
-      "name": "Meera Iyer",
-      "ward": "ICU-A",
-      "age": 71,
-      "hr": 100,
-      "spo2": 97,
-      "status": "Critical",
-      "recovery": 45,
-      "condition": "Respiratory distress review",
-      "doctor": "Dr. Sarah Johnson",
-      "room": "A-14",
-      "risk": "High",
       "hospitalCode": "CITYHOSP01",
-      "labTest": "CRP, ECG Study",
       "labTests": [
         {
           "id": "LT-1044-1",
@@ -78,9 +65,32 @@
           "pdfFilename": null,
           "pdfData": null
         }
-      ]
+      ],
+      "id": "P-1044",
+      "name": "Meera Iyer",
+      "ward": "ICU-A",
+      "age": 71,
+      "hr": 100,
+      "spo2": 97,
+      "status": "Critical",
+      "recovery": 45,
+      "condition": "Respiratory distress review",
+      "doctor": "Dr. Sarah Johnson",
+      "room": "A-14",
+      "risk": "High",
+      "labTest": "CRP, ECG Study"
     },
     {
+      "hospitalCode": "CITYHOSP01",
+      "labTests": [
+        {
+          "id": "LT-1045-1",
+          "name": "Urinalysis",
+          "status": "Pending",
+          "pdfFilename": null,
+          "pdfData": null
+        }
+      ],
       "id": "P-1045",
       "name": "Vikram Reddy",
       "ward": "ICU-B",
@@ -93,17 +103,7 @@
       "doctor": "Dr. Sarah Johnson",
       "room": "B-03",
       "risk": "Medium",
-      "hospitalCode": "CITYHOSP01",
-      "labTest": "Urinalysis",
-      "labTests": [
-        {
-          "id": "LT-1045-1",
-          "name": "Urinalysis",
-          "status": "Pending",
-          "pdfFilename": null,
-          "pdfData": null
-        }
-      ]
+      "labTest": "Urinalysis"
     }
   ],
   "alerts": [

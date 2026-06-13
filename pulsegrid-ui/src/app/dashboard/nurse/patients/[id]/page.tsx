@@ -32,14 +32,11 @@ export default function NursePatientProfilePage() {
     <div className="space-y-6">
       <PatientHeader patient={patient} />
       <PatientStats patient={patient} />
-      <DiagnosisCard patient={patient} />
-
-      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <ECGMonitor />
-        <LiveVitals />
-      </div>
+      <ECGMonitor />
+      <LiveVitals />
 
       <TrendCard />
+      <DiagnosisCard patient={patient} />
 
       <AIInsights />
 

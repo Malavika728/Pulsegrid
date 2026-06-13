@@ -24,6 +24,7 @@ export default function AdminPatientsPage() {
   const [password, setPassword] = useState("PulseGrid@2026");
   const [age, setAge] = useState(45);
   const [ward, setWard] = useState("General");
+  const [doctor, setDoctor] = useState("Dr. Sarah Johnson");
   const [adminCode, setAdminCode] = useState("CITYHOSP01");
 
   const fetchPatients = () => {
@@ -60,6 +61,7 @@ export default function AdminPatientsPage() {
           password,
           age,
           ward,
+          doctor,
           hospitalCode: adminCode,
         }),
       });
@@ -69,6 +71,7 @@ export default function AdminPatientsPage() {
         setEmail("");
         setAge(45);
         setWard("General");
+        setDoctor("Dr. Sarah Johnson");
         setShowAddModal(false);
         fetchPatients();
       }
@@ -220,6 +223,18 @@ export default function AdminPatientsPage() {
                     className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-teal-500 text-sm font-semibold"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Attending Doctor</label>
+                <input
+                  type="text"
+                  required
+                  value={doctor}
+                  onChange={(e) => setDoctor(e.target.value)}
+                  placeholder="e.g. Dr. Sarah Johnson"
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-teal-500 text-sm font-semibold"
+                />
               </div>
             </div>
 
