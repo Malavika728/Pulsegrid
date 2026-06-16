@@ -6,35 +6,32 @@ const BACKEND =
   "https://pulsegrid-production.up.railway.app";
 
 export async function GET(req: NextRequest) {
-  const role = req.nextUrl.searchParams.get("role") || "";
   const hospitalCode =
     req.nextUrl.searchParams.get("hospitalCode") || "CITYHOSP01";
 
   try {
-    const res = await fetch(
-      `${BACKEND}/admin/users?hospitalCode=${hospitalCode}`,
-      {
-        cache: "no-store",
-      }
-    );
+    const url =
+      `${BACKEND}/admin/users?hospitalCode=${hospitalCode}`;
 
-    if (!res.ok) {
-      throw new Error(`Backend returned ${res.status}`);
-    }
+    console.log("Calling:", url);
 
-    const data = await res.json();
+    const res = await fetch(url, {
+      method: "GET",
+      cache: "no-store",
+    });
 
-    return NextResponse.json(
-      role
-        ? data.filter((u: any) => u.role === role)
-        : data
-    );
+    const text = await res.text();
+
+    return NextResponse.json({
+      backend: BACKEND,
+      status: res.status,
+      response: text,
+    });
   } catch (error) {
-    console.error("GET /admin/users failed:", error);
-
     return NextResponse.json(
       {
-        error: "Failed to fetch users from backend",
+        error: String(error),
+        backend: BACKEND,
       },
       { status: 500 }
     );
