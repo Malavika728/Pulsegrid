@@ -43,34 +43,59 @@ export default function AdminDoctorsPage() {
     fetchDoctors();
   }, []);
 
-  const handleAddDoctor = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name || !email) return;
+ const handleAddDoctor = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    try {
-      const res = await fetch("/api/admin/staff", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          role: "Doctor",
-          name,
-          email,
-          password,
-          specialtyOrDepartment: specialty,
-          hospitalCode: adminCode,
-        }),
-      });
+  alert("Register button clicked");
 
-      if (res.ok) {
-        setName("");
-        setEmail("");
-        setSpecialty("Cardiologist");
-        setShowAddModal(false);
-        fetchDoctors();
-      }
-    } catch {}
-  };
+  if (!name || !email) {
+    alert("Name or Email missing");
+    return;
+  }
 
+  try {
+    const payload = {
+      role: "Doctor",
+      name,
+      email,
+      password,
+      specialtyOrDepartment: specialty,
+      hospitalCode: adminCode,
+    };
+
+    console.log("Sending payload:", payload);
+    alert("Sending request...");
+
+    const res = await fetch("/api/admin/staff", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    alert(`Response Status: ${res.status}`);
+
+    const responseText = await res.text();
+
+    console.log("Response:", responseText);
+    alert(responseText);
+
+    if (res.ok) {
+      alert("Doctor registered successfully!");
+
+      setName("");
+      setEmail("");
+      setSpecialty("Cardiologist");
+      setShowAddModal(false);
+
+      fetchDoctors();
+    }
+  } catch (err) {
+    console.error("Registration Error:", err);
+    alert(`ERROR: ${String(err)}`);
+  }
+};
   const filtered = doctors.filter((doc) =>
     doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     doc.email.toLowerCase().includes(searchQuery.toLowerCase())
