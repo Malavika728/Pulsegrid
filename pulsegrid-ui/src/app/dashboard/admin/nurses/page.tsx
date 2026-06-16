@@ -104,7 +104,7 @@ export default function AdminNursesPage() {
       </div>
 
       {/* Grid of Nurses */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
         {filtered.length === 0 ? (
           <div className="col-span-3 text-center py-10 bg-white border border-slate-100 rounded-3xl text-slate-400 font-semibold">
             No nurses registered.

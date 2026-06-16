@@ -127,7 +127,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-[280px] bg-white border-r border-slate-200 h-screen sticky top-0 flex flex-col">
+    <aside className="w-full lg:w-[280px] bg-white border-r border-slate-200 lg:h-screen lg:sticky lg:top-0 flex flex-col">
       {/* Logo */}
       <div className="p-6 border-b border-slate-100">
         <PulseGridLogo size="sm" />

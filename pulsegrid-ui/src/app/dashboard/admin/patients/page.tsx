@@ -111,7 +111,7 @@ export default function AdminPatientsPage() {
       </div>
 
       {/* Grid of Patients */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
         {filtered.length === 0 ? (
           <div className="col-span-3 text-center py-10 bg-white border border-slate-100 rounded-3xl text-slate-400 font-semibold">
             No patients registered.

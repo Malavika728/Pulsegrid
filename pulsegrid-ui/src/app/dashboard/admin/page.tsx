@@ -69,7 +69,7 @@ export default function AdminDashboardPage() {
       </section>
 
       {/* Stats Cards */}
-      <section className="grid gap-6 md:grid-cols-4">
+      <section className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         <article className="rounded-[24px] border border-slate-100 bg-white p-6 shadow-sm hover:shadow-md transition">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
