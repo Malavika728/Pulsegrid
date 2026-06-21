@@ -1,17 +1,30 @@
 export default function PhoneMockup() {
   return (
-    <div className="absolute left-[-20px] top-[40px] rotate-[4deg] z-30">
-
-      <div className="w-[200px] bg-white rounded-[38px] border-[5px] border-slate-900 shadow-2xl overflow-hidden">
-
+    <div
+      className="
+        absolute
+        left-[-5px]
+        top-[20px]
+        sm:left-[-10px]
+        sm:top-[30px]
+        lg:left-[-20px]
+        lg:top-[40px]
+        rotate-[4deg]
+        z-30
+        scale-[0.75]
+        sm:scale-[0.85]
+        md:scale-[0.95]
+        lg:scale-100
+        origin-top-left
+      "
+    >
+      <div className="w-[160px] sm:w-[180px] lg:w-[200px] bg-white rounded-[38px] border-[5px] border-slate-900 shadow-2xl overflow-hidden">
         {/* Notch */}
-
         <div className="flex justify-center pt-3">
           <div className="w-20 h-5 bg-slate-900 rounded-full"></div>
         </div>
 
         <div className="p-4">
-
           <div className="flex justify-between text-[10px] text-slate-500 mb-4">
             <span>11:05</span>
             <span>📶 🔋</span>
@@ -26,9 +39,7 @@ export default function PhoneMockup() {
           </p>
 
           {/* Stats */}
-
           <div className="grid grid-cols-2 gap-2 mt-4">
-
             <div className="bg-slate-50 rounded-xl p-2">
               <p className="text-[9px] text-slate-500">
                 Total Patients
@@ -48,19 +59,15 @@ export default function PhoneMockup() {
                 8
               </h3>
             </div>
-
           </div>
 
           {/* Live Monitoring */}
-
           <div className="mt-4">
-
             <p className="font-semibold text-xs mb-2">
               Live Monitoring
             </p>
 
             <div className="space-y-2">
-
               <div className="flex justify-between items-center bg-slate-50 rounded-xl p-2">
                 <div>
                   <p className="text-[10px] font-medium">
@@ -108,25 +115,17 @@ export default function PhoneMockup() {
                   Alert
                 </span>
               </div>
-
             </div>
-
           </div>
 
           {/* Footer */}
-
           <div className="mt-4 text-center">
-
             <button className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-xs py-2 rounded-xl">
               View All
             </button>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
   );
 }
