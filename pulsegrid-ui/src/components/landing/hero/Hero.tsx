@@ -157,8 +157,8 @@ export default function Hero() {
               hidden
               lg:block
               absolute
-              right-[-30px]
-              xl:right-[20px]
+              right-[-20px]
+              xl:right-[40px]
               top-[20px]
               z-30
               rotate-[4deg]
