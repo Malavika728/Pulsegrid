@@ -1,6 +1,6 @@
 export default function DashboardMockup() {
   return (
-    <div className="relative w-full max-w-[820px]">
+    <div className="relative w-[820px]">
 
       <div className="bg-white rounded-[32px] shadow-[0_25px_60px_rgba(0,0,0,0.08)] border border-slate-100 overflow-hidden">
 
