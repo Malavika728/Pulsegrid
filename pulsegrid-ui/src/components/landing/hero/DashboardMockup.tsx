@@ -1,10 +1,10 @@
 export default function DashboardMockup() {
   return (
-    <div className="relative w-[820px]">
+    <div className="relative w-full max-w-[820px] mx-auto">
 
       <div className="bg-white rounded-[32px] shadow-[0_25px_60px_rgba(0,0,0,0.08)] border border-slate-100 overflow-hidden">
 
-        <div className="grid grid-cols-[160px_1fr] h-[430px]">
+        <div className="grid md:grid-cols-[160px_1fr] min-h-[430px]">
 
           {/* Sidebar */}
 
@@ -32,12 +32,12 @@ export default function DashboardMockup() {
 
           {/* Main */}
 
-          <div className="p-6">
+          <div className="p-4 md:p-6">
 
             <div className="flex items-center justify-between">
 
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">
+                <h2 className="text-xl md:text-2xl font-bold text-slate-900">
                   Dashboard
                 </h2>
 
@@ -50,14 +50,14 @@ export default function DashboardMockup() {
 
             {/* Top Cards */}
 
-            <div className="grid grid-cols-4 gap-3 mt-5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
 
               <div className="bg-slate-50 rounded-xl p-3">
                 <p className="text-[11px] text-slate-500">
                   Total Patients
                 </p>
 
-                <h4 className="text-2xl font-bold mt-2">
+                <h4 className="text-xl md:text-2xl font-bold mt-2">
                   1248
                 </h4>
               </div>
@@ -67,7 +67,7 @@ export default function DashboardMockup() {
                   Active Monitoring
                 </p>
 
-                <h4 className="text-2xl font-bold mt-2">
+                <h4 className="text-xl md:text-2xl font-bold mt-2">
                   324
                 </h4>
               </div>
@@ -77,7 +77,7 @@ export default function DashboardMockup() {
                   Critical Alerts
                 </p>
 
-                <h4 className="text-2xl font-bold text-red-500 mt-2">
+                <h4 className="text-xl md:text-2xl font-bold text-red-500 mt-2">
                   8
                 </h4>
               </div>
@@ -87,7 +87,7 @@ export default function DashboardMockup() {
                   Recovery Score
                 </p>
 
-                <h4 className="text-2xl font-bold text-teal-600 mt-2">
+                <h4 className="text-xl md:text-2xl font-bold text-teal-600 mt-2">
                   85%
                 </h4>
               </div>
@@ -96,7 +96,7 @@ export default function DashboardMockup() {
 
             {/* Chart */}
 
-            <div className="mt-5 bg-slate-50 rounded-2xl p-5">
+            <div className="mt-5 bg-slate-50 rounded-2xl p-4 md:p-5">
 
               <h4 className="font-semibold text-slate-800 mb-4">
                 Patient Vitals
@@ -134,7 +134,7 @@ export default function DashboardMockup() {
 
             {/* Bottom Metrics */}
 
-            <div className="grid grid-cols-4 gap-4 mt-4 text-sm">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4 text-sm">
 
               <div>
                 <p className="text-slate-400">Heart Rate</p>
