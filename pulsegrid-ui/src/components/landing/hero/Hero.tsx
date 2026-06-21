@@ -140,10 +140,6 @@ export default function Hero() {
               className="
               relative
               z-20
-              scale-[0.65]
-              sm:scale-[0.8]
-              lg:scale-[0.92]
-              xl:scale-100
               animate-[float_6s_ease-in-out_infinite]
               "
             >
@@ -158,7 +154,6 @@ export default function Hero() {
               lg:block
               absolute
               right-[-20px]
-              xl:right-[40px]
               top-[20px]
               z-30
               rotate-[4deg]
