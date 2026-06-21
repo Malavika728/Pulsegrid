@@ -11,13 +11,18 @@ export default function Hero() {
     >
       <FloatingParticles />
 
+      {/* Background Glows */}
+
       <div className="absolute -left-48 top-0 w-[700px] h-[700px] rounded-full bg-teal-200/20 blur-[140px]" />
       <div className="absolute -right-48 top-0 w-[700px] h-[700px] rounded-full bg-cyan-200/20 blur-[140px]" />
       <div className="absolute right-40 top-32 w-[400px] h-[400px] rounded-full bg-teal-300/10 blur-[120px]" />
       <div className="absolute left-20 bottom-20 w-[300px] h-[300px] rounded-full bg-cyan-200/10 blur-[100px]" />
 
+      {/* Main Container */}
+
       <div className="relative max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-20 pt-12 lg:pt-16 pb-10">
         <div className="grid lg:grid-cols-[42%_58%] gap-12 lg:gap-8 items-center">
+
           {/* LEFT SIDE */}
 
           <div>
@@ -40,6 +45,8 @@ export default function Hero() {
               patients with real-time monitoring, AI-powered clinical
               insights, intelligent alerts and recovery analytics.
             </p>
+
+            {/* CTA */}
 
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 mt-8 lg:mt-10">
               <button
@@ -77,6 +84,8 @@ export default function Hero() {
               </button>
             </div>
 
+            {/* TRUSTED USERS */}
+
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 mt-8 lg:mt-10">
               <div className="flex -space-x-3">
                 <img
@@ -84,16 +93,19 @@ export default function Hero() {
                   alt=""
                   className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white shadow-md"
                 />
+
                 <img
                   src="https://i.pravatar.cc/100?img=12"
                   alt=""
                   className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white shadow-md"
                 />
+
                 <img
                   src="https://i.pravatar.cc/100?img=13"
                   alt=""
                   className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white shadow-md"
                 />
+
                 <img
                   src="https://i.pravatar.cc/100?img=18"
                   alt=""
@@ -115,32 +127,39 @@ export default function Hero() {
 
           {/* RIGHT SIDE */}
 
-          <div className="relative h-[320px] sm:h-[420px] lg:h-[550px] flex items-center justify-center">
+          <div className="relative h-[360px] sm:h-[500px] lg:h-[650px] flex items-center justify-center overflow-visible">
             <ECGAnimation />
 
-            <div className="absolute w-[280px] sm:w-[450px] lg:w-[650px] h-[180px] sm:h-[260px] lg:h-[350px] bg-teal-400/20 blur-[120px] rounded-full" />
+            {/* Dashboard Glow */}
+
+            <div className="absolute w-[280px] sm:w-[450px] lg:w-[700px] h-[180px] sm:h-[260px] lg:h-[400px] bg-teal-400/20 blur-[120px] rounded-full" />
+
+            {/* Dashboard */}
 
             <div
               className="
-              relative z-20
-              scale-[0.72]
-              sm:scale-[0.88]
-              lg:scale-100
+              relative
+              z-20
+              scale-[0.65]
+              sm:scale-[0.8]
+              lg:scale-[0.92]
+              xl:scale-100
               animate-[float_6s_ease-in-out_infinite]
               "
             >
               <DashboardMockup />
             </div>
 
+            {/* Phone */}
+
             <div
               className="
+              hidden
+              lg:block
               absolute
-              right-0
-              sm:right-[10px]
-              lg:right-[20px]
-              top-0
-              sm:top-[10px]
-              lg:top-[20px]
+              right-[-30px]
+              xl:right-[20px]
+              top-[20px]
               z-30
               rotate-[4deg]
               animate-[phoneFloat_6s_ease-in-out_infinite]
@@ -149,6 +168,7 @@ export default function Hero() {
               <PhoneMockup />
             </div>
           </div>
+
         </div>
       </div>
     </section>
