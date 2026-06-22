@@ -1,8 +1,8 @@
 export default function PhoneMockup() {
   return (
-    <div className="hidden lg:block absolute right-0 xl:right-6 top-10 rotate-[4deg] z-30">
+    <div className="hidden lg:block absolute right-0 xl:right-4 top-10 rotate-[4deg] z-30">
 
-      <div className="w-[200px] xl:w-[220px] bg-white rounded-[38px] border-[5px] border-slate-900 shadow-2xl overflow-hidden">
+      <div className="w-[200px] xl:w-[120px] bg-white rounded-[38px] border-[5px] border-slate-900 shadow-2xl overflow-hidden">
 
         {/* Notch */}
 
