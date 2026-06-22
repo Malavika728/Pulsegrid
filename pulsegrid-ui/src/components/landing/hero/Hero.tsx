@@ -154,12 +154,12 @@ export default function Hero() {
   <div
     className="
       hidden
-      lg:block
+      block
       absolute
-      right-[-40px]
-      top-[30px]
+      right-[-70px]
+      top-[10px]
       z-30
-      rotate-[4deg]
+      rotate-[8deg]
       animate-[phoneFloat_6s_ease-in-out_infinite]
     "
   >
