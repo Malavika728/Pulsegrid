@@ -125,52 +125,45 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* RIGHT SIDE */}
+        {/* RIGHT SIDE */}
 
-          <div className="relative h-[360px] sm:h-[500px] lg:h-[650px] flex items-center justify-center overflow-visible">
-            <ECGAnimation />
+<div className="relative min-h-[500px] lg:min-h-[650px] flex items-center justify-center">
 
-            {/* Dashboard Glow */}
+  <ECGAnimation />
 
-            <div className="absolute w-[280px] sm:w-[450px] lg:w-[700px] h-[180px] sm:h-[260px] lg:h-[400px] bg-teal-400/20 blur-[120px] rounded-full" />
+  {/* Dashboard Glow */}
 
-            {/* Dashboard */}
+  <div className="absolute w-[300px] sm:w-[500px] lg:w-[700px] h-[200px] sm:h-[300px] lg:h-[400px] bg-teal-400/20 blur-[120px] rounded-full" />
 
-            <div
-              className="
-              relative
-              z-20
-              scale-[0.65]
-              sm:scale-[0.8]
-              lg:scale-[0.92]
-              xl:scale-100
-              animate-[float_6s_ease-in-out_infinite]
-              "
-            >
-              <DashboardMockup />
-            </div>
+  {/* Dashboard */}
 
-            {/* Phone */}
+  <div
+    className="
+      relative
+      z-20
+      w-full
+      max-w-[820px]
+      animate-[float_6s_ease-in-out_infinite]
+    "
+  >
+    <DashboardMockup />
+  </div>
 
-            <div
-              className="
-              hidden
-              lg:block
-              absolute
-              right-[-30px]
-              xl:right-[20px]
-              top-[20px]
-              z-30
-              rotate-[4deg]
-              animate-[phoneFloat_6s_ease-in-out_infinite]
-              "
-            >
-              <PhoneMockup />
-            </div>
-          </div>
+  {/* Phone */}
 
-        </div>
-      </div>
-    </section>
-  );
-}
+  <div
+    className="
+      hidden
+      lg:block
+      absolute
+      right-[-40px]
+      top-[30px]
+      z-30
+      rotate-[4deg]
+      animate-[phoneFloat_6s_ease-in-out_infinite]
+    "
+  >
+    <PhoneMockup />
+  </div>
+
+</div>
