@@ -1,19 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
-import fs from "fs";
-import path from "path";
 
-const BACKEND = "http://localhost:4000";
-const DB_FILE = path.join(process.cwd(), "..", "backend", "database-fallback.json");
+const BACKEND =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://pulsegrid-production.up.railway.app";
 
-function readDB(): any {
-  try {
-    if (fs.existsSync(DB_FILE)) {
-      return JSON.parse(fs.readFileSync(DB_FILE, "utf-8"));
-    }
-  } catch {}
-  return null;
-}
-
+// Static role metadata
 const roleData = {
   doctor: {
     title: "Attending Cardiologist",
@@ -55,44 +46,19 @@ const roleData = {
     title: "Hospital Admin Portal",
     summary: "Hospital operations, staff scheduling, user accounts, and system health.",
     stats: [
-      { label: "Doctors", value: "1", detail: "Dr. Sarah Johnson" },
-      { label: "Nurses", value: "1", detail: "Nancy Wheeler" },
-      { label: "Patients", value: "4", detail: "4 registered under hospital" },
+      { label: "Doctors", value: "1", detail: "Registered" },
+      { label: "Nurses", value: "1", detail: "On shift" },
+      { label: "Patients", value: "4", detail: "Total in care" },
     ],
   },
 };
 
-const defaultIdentities = {
-  doctor: {
-    name: "Dr. Sarah Johnson",
-    email: "doctor@pulsegrid.health",
-    role: "Attending Cardiologist",
-    specialtyOrDepartment: "Cardiology",
-  },
-  nurse: {
-    name: "Nancy Wheeler",
-    email: "nurse@pulsegrid.health",
-    role: "Charge Nurse",
-    specialtyOrDepartment: "Emergency Department",
-  },
-  patient: {
-    name: "Arjun Sharma",
-    email: "patient@pulsegrid.health",
-    role: "Patient",
-    specialtyOrDepartment: "General Ward",
-  },
-  lab: {
-    name: "Ravi Thomas",
-    email: "lab@pulsegrid.health",
-    role: "Lab Analyst",
-    specialtyOrDepartment: "Clinical Pathology",
-  },
-  admin: {
-    name: "Jordan Lee",
-    email: "hospital.admin@pulsegrid.health",
-    role: "Hospital Operations Manager",
-    specialtyOrDepartment: "Administration",
-  },
+const defaultIdentities: Record<string, any> = {
+  doctor: { name: "Dr. Sarah Johnson", email: "doctor@pulsegrid.health", role: "Attending Cardiologist", specialtyOrDepartment: "Cardiology" },
+  nurse: { name: "Nancy Wheeler", email: "nurse@pulsegrid.health", role: "Charge Nurse", specialtyOrDepartment: "Emergency Department" },
+  patient: { name: "Arjun Sharma", email: "patient@pulsegrid.health", role: "Patient", specialtyOrDepartment: "General Ward" },
+  lab: { name: "Ravi Thomas", email: "lab@pulsegrid.health", role: "Lab Analyst", specialtyOrDepartment: "Clinical Pathology" },
+  admin: { name: "Jordan Lee", email: "hospital.admin@pulsegrid.health", role: "Hospital Operations Manager", specialtyOrDepartment: "Administration" },
 };
 
 export async function GET(
@@ -101,111 +67,88 @@ export async function GET(
 ) {
   const { role } = await params;
   let normalized = role.toLowerCase();
-  if (normalized === "hospital-admin" || normalized === "admin") {
-    normalized = "admin";
-  }
-  if (normalized === "lab-tech") {
-    normalized = "lab";
-  }
+  if (normalized === "hospital-admin" || normalized === "hospital_admin") normalized = "admin";
+  if (normalized === "lab-tech" || normalized === "lab_tech") normalized = "lab";
 
   if (!roleData[normalized as keyof typeof roleData]) {
-    return NextResponse.json({ error: "Role dashboard not found" }, { status: 404 });
+    return NextResponse.json({ error: "Role not found" }, { status: 404 });
   }
 
   const email = req.nextUrl.searchParams.get("email")?.trim().toLowerCase();
-  
-  // Try to find identity in database fallback
+  const hospitalCode = req.nextUrl.searchParams.get("hospitalCode") || "CITYHOSP01";
+
   let identity: any = null;
-  const db = readDB();
-  if (db && db.users) {
-    const userRow = db.users.find((u: any) => u.email.trim().toLowerCase() === email);
-    if (userRow) {
-      identity = {
-        name: userRow.name,
-        email: userRow.email,
-        role: userRow.role,
-        specialtyOrDepartment: userRow.specialtyOrDepartment,
-        hospitalCode: userRow.hospitalCode,
-      };
-    }
-  }
-
-  if (!identity) {
-    identity = defaultIdentities[normalized as keyof typeof defaultIdentities];
-  }
-
-  // Fetch backend dashboard stats if available
   let stats = roleData[normalized as keyof typeof roleData].stats;
-  try {
-    let backendUrl = "";
-    if (normalized === "doctor" || normalized === "nurse") {
-      backendUrl = `${BACKEND}/dashboard/doctor`;
-    } else if (normalized === "admin") {
-      backendUrl = `${BACKEND}/dashboard/admin`;
-    }
 
-    if (backendUrl) {
-      const res = await fetch(backendUrl);
-      if (res.ok) {
-        const data = await res.json();
-        if (normalized === "doctor" || normalized === "nurse") {
-          stats = [
-            { label: "Patients", value: String(data.totalPatients || 0), detail: "Active telemetry" },
-            { label: "Monitoring active", value: String(data.activeMonitoring || 0), detail: "Bedside observation" },
-            { label: "Open alerts", value: String(data.openAlerts || 0), detail: "Require attention" },
-          ];
-        } else if (normalized === "admin") {
-          stats = [
-            { label: "Doctors", value: String(db?.users?.filter((u: any) => u.role === "Doctor").length || 1), detail: "Registered" },
-            { label: "Nurses", value: String(db?.users?.filter((u: any) => u.role === "Nurse").length || 1), detail: "On shift" },
-            { label: "Patients", value: String(data.activePatients || 0), detail: "Total in care" },
-          ];
+  // Fetch identity and stats from backend (not local filesystem)
+  try {
+    // Get users from backend to find the logged-in user's info
+    if (email) {
+      const usersRes = await fetch(
+        `${BACKEND}/admin/users?hospitalCode=${encodeURIComponent(hospitalCode)}`,
+        { cache: "no-store" }
+      );
+      if (usersRes.ok) {
+        const users = await usersRes.json();
+        if (Array.isArray(users)) {
+          const found = users.find(
+            (u: any) => u.email?.trim().toLowerCase() === email ||
+                        u.email?.trim().toLowerCase() === email
+          );
+          if (found) {
+            identity = {
+              name: found.name,
+              email: found.email,
+              role: found.role,
+              specialtyOrDepartment: found.specialtyOrDepartment || found.specialty_or_department,
+              hospitalCode: found.hospitalCode || found.hospital_code,
+            };
+          }
+          // Build live stats for admin role
+          if (normalized === "admin") {
+            const doctors = users.filter((u: any) => u.role === "Doctor").length;
+            const nurses = users.filter((u: any) => u.role === "Nurse").length;
+            const patients = users.filter((u: any) => u.role === "Patient").length;
+            stats = [
+              { label: "Doctors", value: String(doctors), detail: "Registered" },
+              { label: "Nurses", value: String(nurses), detail: "On shift" },
+              { label: "Patients", value: String(patients), detail: "Total in care" },
+            ];
+          }
         }
       }
     }
-  } catch {}
 
-  // For Patient role, let's also fetch patient stats
-  if (normalized === "patient" && db && db.patients) {
-    const patientRow = db.patients.find((p: any) => p.name.toLowerCase() === identity.name.toLowerCase());
-    if (patientRow) {
-      identity.patientId = patientRow.id;
-      identity.ward = patientRow.ward;
-      identity.attending = patientRow.doctor;
-      identity.status = patientRow.status;
-      stats = [
-        { label: "Recovery score", value: `${patientRow.recovery || 85}%`, detail: "Stable" },
-        { label: "Attending Doctor", value: patientRow.doctor || "Dr. Sarah Johnson", detail: patientRow.ward || "ICU-A" },
-        { label: "Assigned Tests", value: String(patientRow.labTests?.length || 0), detail: "Lab panels" },
-      ];
+    // Get dashboard stats from backend
+    if (normalized === "doctor" || normalized === "nurse") {
+      const dashRes = await fetch(`${BACKEND}/dashboard/doctor`, { cache: "no-store" });
+      if (dashRes.ok) {
+        const data = await dashRes.json();
+        stats = [
+          { label: "Patients", value: String(data.totalPatients || 0), detail: "Active telemetry" },
+          { label: "Monitoring active", value: String(data.activeMonitoring || 0), detail: "Bedside observation" },
+          { label: "Open alerts", value: String(data.openAlerts || 0), detail: "Require attention" },
+        ];
+      }
     }
+  } catch {
+    // Backend not reachable — use defaults below
   }
 
-  // For Lab Tech, let's calculate pending reports from patients list
-  if (normalized === "lab" && db && db.patients) {
-    let pendingCount = 0;
-    let uploadedCount = 0;
-    db.patients.forEach((p: any) => {
-      (p.labTests || []).forEach((t: any) => {
-        if (t.status === "Pending") pendingCount++;
-        else if (t.status === "Uploaded") uploadedCount++;
-      });
-    });
-    stats = [
-      { label: "Pending reports", value: String(pendingCount), detail: "Awaiting upload" },
-      { label: "Uploaded reports", value: String(uploadedCount), detail: "Released" },
-      { label: "SLA compliance", value: "100%", detail: "All clear" },
-    ];
+  // Fall back to hardcoded identity if user not found in DB
+  if (!identity) {
+    identity = defaultIdentities[normalized] || defaultIdentities["doctor"];
   }
 
   const alerts = [
     { title: "Medication Scheduled", patient: identity?.name || "Patient", detail: "Morning dose of Aspirin (81mg) is due in 30 minutes." },
-    { title: "Lab Request Received", patient: identity?.name || "Patient", detail: "Attending cardiologist assigned a new Blood Pathology panel." }
+    { title: "Lab Request Received", patient: identity?.name || "Patient", detail: "Attending cardiologist assigned a new Blood Pathology panel." },
   ];
+
   const tasks = [
     "Confirm morning medication adherence",
     "Complete telemetry device calibration check",
-    "Log daily vitals reading (blood pressure & temperature)"
+    "Log daily vitals reading (blood pressure & temperature)",
   ];
 
   return NextResponse.json({
@@ -216,7 +159,7 @@ export async function GET(
     alerts,
     tasks,
     notifications: [
-      { source: "Hospital Ops", message: "PulseGrid platform online", priority: "Low" }
+      { source: "Hospital Ops", message: "PulseGrid platform online", priority: "Low" },
     ],
   });
 }

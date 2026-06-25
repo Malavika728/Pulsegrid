@@ -20,14 +20,6 @@ const roleRoutes: Record<string, string> = {
   "Hospital Admin": "/dashboard/admin",
 };
 
-const roleCredentials: Record<string, { email: string; password: string }> = {
-  Doctor: { email: "doctor@pulsegrid.health", password: "PulseGrid@2026" },
-  Nurse: { email: "nurse@pulsegrid.health", password: "PulseGrid@2026" },
-  Patient: { email: "patient@pulsegrid.health", password: "PulseGrid@2026" },
-  "Lab Tech": { email: "lab@pulsegrid.health", password: "PulseGrid@2026" },
-  "Hospital Admin": { email: "hospital.admin@pulsegrid.health", password: "PulseGrid@2026" },
-};
-
 const hospitalOptions = [
   { code: "CITYHOSP01", name: "City General Hospital" },
   { code: "APOLLOH01", name: "Apollo Hospital" },
@@ -38,25 +30,94 @@ export default function LoginPage() {
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState("Doctor");
   const [hospitalCode, setHospitalCode] = useState("CITYHOSP01");
-  const [email, setEmail] = useState(roleCredentials.Doctor.email);
-  const [password, setPassword] = useState(roleCredentials.Doctor.password);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const hospitalName =
-    hospitalOptions.find((item) => item.code.toLowerCase() === hospitalCode.trim().toLowerCase())?.name ||
-    "PulseGrid Hospital";
+    hospitalOptions.find(
+      (item) => item.code.toLowerCase() === hospitalCode.trim().toLowerCase()
+    )?.name || "PulseGrid Hospital";
+
+  const handleLogin = async () => {
+    setError("");
+
+    const normalizedCode = hospitalCode.trim().toUpperCase();
+
+    if (!normalizedCode) {
+      setError("Enter your hospital code to continue.");
+      return;
+    }
+
+    const knownHospital = hospitalOptions.some(
+      (item) => item.code === normalizedCode
+    );
+    if (!knownHospital) {
+      setError(
+        "Hospital code not recognized. Use CITYHOSP01, APOLLOH01, or YASHODA01."
+      );
+      return;
+    }
+
+    if (!email.trim()) {
+      setError("Please enter your email address.");
+      return;
+    }
+
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          password,
+          role: selectedRole,
+          hospitalCode: normalizedCode,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Invalid credentials. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      // Store user info in localStorage for the dashboard to read
+      localStorage.setItem(
+        "pulsegrid_user",
+        JSON.stringify({
+          role: data.user.role || selectedRole,
+          name: data.user.name,
+          email: data.user.email,
+          hospitalCode: normalizedCode,
+          hospitalName,
+          token: data.token,
+        })
+      );
+
+      router.push(roleRoutes[selectedRole] ?? "/dashboard/doctor");
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-white via-[#F8FCFC] to-[#EEF9F8]">
-
       <div className="max-w-7xl mx-auto px-8 py-20">
-
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-
           {/* LEFT SIDE */}
-
           <div>
-
             <div className="inline-flex items-center gap-2 bg-teal-50 text-teal-700 px-5 py-2 rounded-full text-sm font-medium">
               ● Connected Care • Secure Access
             </div>
@@ -72,13 +133,11 @@ export default function LoginPage() {
             </h1>
 
             <p className="mt-8 text-xl text-slate-600 leading-9 max-w-xl">
-              Access patient monitoring, analytics, reports,
-              alerts and intelligent healthcare workflows
-              through PulseGrid.
+              Access patient monitoring, analytics, reports, alerts and
+              intelligent healthcare workflows through PulseGrid.
             </p>
 
             <div className="grid grid-cols-1 gap-4 mt-10">
-
               <div className="bg-white rounded-2xl shadow-md border border-slate-100 p-5">
                 <h4 className="font-semibold text-slate-900">
                   Real-Time Monitoring
@@ -105,35 +164,25 @@ export default function LoginPage() {
                   HIPAA compliant access and data protection.
                 </p>
               </div>
-
             </div>
-
           </div>
 
           {/* RIGHT SIDE */}
-
           <div>
-
             <div className="bg-white rounded-[32px] shadow-xl border border-slate-100 p-10">
-
               <div className="text-center">
-
                 <div className="flex justify-center mb-8">
                   <PulseGridLogo />
                 </div>
 
-                <h2 className="text-3xl font-bold text-slate-900">
-                  Sign In
-                </h2>
+                <h2 className="text-3xl font-bold text-slate-900">Sign In</h2>
 
                 <p className="text-slate-500 mt-3">
                   Access your hospital workspace
                 </p>
-
               </div>
 
               {/* Roles */}
-
               <div className="grid grid-cols-3 gap-3 mt-8">
                 {roles.map((role) => (
                   <button
@@ -141,8 +190,6 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => {
                       setSelectedRole(role);
-                      setEmail(roleCredentials[role].email);
-                      setPassword(roleCredentials[role].password);
                       setError("");
                     }}
                     className={`rounded-xl py-3 font-medium transition ${
@@ -157,25 +204,27 @@ export default function LoginPage() {
               </div>
 
               {/* Inputs */}
-
               <div className="mt-8 space-y-5">
-
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">Hospital Code</label>
+                  <label className="text-sm font-medium text-slate-700">
+                    Hospital Code
+                  </label>
                   <input
                     type="text"
                     value={hospitalCode}
-                    onChange={(event) => setHospitalCode(event.target.value)}
+                    onChange={(e) => setHospitalCode(e.target.value)}
                     placeholder="CITYHOSP01"
                     className="w-full border border-slate-200 rounded-xl px-5 py-4 outline-none focus:border-teal-500"
                   />
-                  <p className="text-xs text-slate-500">Use CITYHOSP01, APOLLOH01, or YASHODA01 for the multi-tenant demo.</p>
+                  <p className="text-xs text-slate-500">
+                    Use CITYHOSP01, APOLLOH01, or YASHODA01.
+                  </p>
                 </div>
 
                 <input
                   type="email"
                   value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email Address"
                   className="w-full border border-slate-200 rounded-xl px-5 py-4 outline-none focus:border-teal-500"
                 />
@@ -183,15 +232,13 @@ export default function LoginPage() {
                 <input
                   type="password"
                   value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
                   className="w-full border border-slate-200 rounded-xl px-5 py-4 outline-none focus:border-teal-500"
                 />
-
               </div>
 
               <div className="flex justify-between items-center mt-5 text-sm">
-
                 <label className="flex items-center gap-2 text-slate-600">
                   <input type="checkbox" />
                   Remember Me
@@ -200,72 +247,26 @@ export default function LoginPage() {
                 <button className="text-teal-600 font-medium">
                   Forgot Password?
                 </button>
-
               </div>
 
-              <p className="mt-4 rounded-2xl border border-teal-100 bg-teal-50 px-4 py-3 text-sm text-teal-800">
-                Demo credentials for {selectedRole}: {roleCredentials[selectedRole].email} / {roleCredentials[selectedRole].password}
-              </p>
-
-              {error ? <p className="mt-3 text-sm text-rose-600">{error}</p> : null}
+              {error ? (
+                <p className="mt-3 text-sm text-rose-600 bg-rose-50 px-4 py-3 rounded-xl">
+                  {error}
+                </p>
+              ) : null}
 
               <button
                 type="button"
-                onClick={() => {
-                  const expected = roleCredentials[selectedRole];
-
-                  const normalizedCode = hospitalCode.trim().toUpperCase();
-                  const knownHospital = hospitalOptions.some((item) => item.code === normalizedCode);
-
-                  if (!normalizedCode) {
-                    setError("Enter your hospital code to continue.");
-                    return;
-                  }
-
-                  if (!knownHospital) {
-                    setError("Hospital code not recognized. Use CITYHOSP01, APOLLOH01, or YASHODA01.");
-                    return;
-                  }
-
-                  if (email.trim().toLowerCase() === expected.email && password === expected.password) {
-                    setError("");
-                    const names: Record<string, string> = {
-                      Doctor: "Dr. Sarah Johnson",
-                      Nurse: "Nancy Wheeler",
-                      Patient: "Arjun Sharma",
-                      "Lab Tech": "Ravi Thomas",
-                      "Hospital Admin": "Jordan Lee",
-                    };
-                    const displayName = names[selectedRole] || "User";
-                    localStorage.setItem(
-                      "pulsegrid_user",
-                      JSON.stringify({
-                        role: selectedRole,
-                        name: displayName,
-                        email: email.trim().toLowerCase(),
-                        hospitalCode: normalizedCode,
-                        hospitalName,
-                      })
-                    );
-                    router.push(roleRoutes[selectedRole] ?? "/dashboard/doctor");
-                    return;
-                  }
-
-                  setError("Invalid credentials. Use the role demo credentials shown above.");
-                }}
-                className="w-full mt-8 py-4 rounded-xl bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold shadow-lg hover:scale-[1.02] transition"
+                onClick={handleLogin}
+                disabled={loading}
+                className="w-full mt-8 py-4 rounded-xl bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold shadow-lg hover:scale-[1.02] transition disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                Login as {selectedRole}
+                {loading ? "Signing In..." : `Login as ${selectedRole}`}
               </button>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </main>
   );
 }

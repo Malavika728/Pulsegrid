@@ -156,10 +156,10 @@ export default function Hero() {
       hidden
       block
       absolute
-      right-[-70px]
-      top-[10px]
+      right-[-40px]
+      top-[30px]
       z-30
-      rotate-[8deg]
+      rotate-[4deg]
       animate-[phoneFloat_6s_ease-in-out_infinite]
     "
   >

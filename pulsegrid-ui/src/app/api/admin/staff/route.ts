@@ -1,52 +1,59 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-// Railway Backend URL
 const BACKEND =
   process.env.NEXT_PUBLIC_API_URL ||
   "https://pulsegrid-production.up.railway.app";
 
+// GET /api/admin/staff?hospitalCode=CITYHOSP01&role=Doctor
 export async function GET(req: NextRequest) {
   const hospitalCode =
     req.nextUrl.searchParams.get("hospitalCode") || "CITYHOSP01";
+  const role = req.nextUrl.searchParams.get("role") || "";
 
   try {
-    const url =
-      `${BACKEND}/admin/users?hospitalCode=${hospitalCode}`;
+    const params = new URLSearchParams({ hospitalCode });
+    if (role) params.set("role", role);
 
-    console.log("Calling:", url);
-
-    const res = await fetch(url, {
+    const res = await fetch(`${BACKEND}/admin/users?${params.toString()}`, {
       method: "GET",
       cache: "no-store",
     });
 
-    const text = await res.text();
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: `Backend returned ${res.status}` },
+        { status: res.status }
+      );
+    }
 
-    return NextResponse.json({
-      backend: BACKEND,
-      status: res.status,
-      response: text,
-    });
+    const data = await res.json();
+
+    // Filter by role on the frontend side if backend doesn't filter
+    if (role && Array.isArray(data)) {
+      const filtered = data.filter(
+        (u: any) => u.role?.toLowerCase() === role.toLowerCase() ||
+                    u.role?.toLowerCase() === role.toLowerCase().replace(" ", "_")
+      );
+      return NextResponse.json(filtered);
+    }
+
+    return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
-      {
-        error: String(error),
-        backend: BACKEND,
-      },
+      { error: `Failed to reach backend: ${String(error)}` },
       { status: 500 }
     );
   }
 }
 
+// POST /api/admin/staff  — create a new user
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
     const res = await fetch(`${BACKEND}/admin/users`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
 
@@ -54,28 +61,16 @@ export async function POST(req: NextRequest) {
 
     if (!res.ok) {
       return NextResponse.json(
-        {
-          error: data,
-        },
-        {
-          status: res.status,
-        }
+        { error: data?.message || data?.error || "Failed to create user" },
+        { status: res.status }
       );
     }
 
-    return NextResponse.json(data, {
-      status: 201,
-    });
+    return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error("POST /admin/users failed:", error);
-
     return NextResponse.json(
-      {
-        error: "Failed to create user",
-      },
-      {
-        status: 500,
-      }
+      { error: `Failed to reach backend: ${String(error)}` },
+      { status: 500 }
     );
   }
 }
